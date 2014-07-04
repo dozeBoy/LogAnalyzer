@@ -1,4 +1,5 @@
 package com.saguaro.LogAnalyzer;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,9 +24,9 @@ public class LogParser {
 	private static boolean _clearDate = false;
 	// private static int _takeNextLines = 0;
 	// private static int _takePrevLines = 0;
-	//private static String _thread = null;
+	// private static String _thread = null;
 
-	//private static boolean _regEx = false;
+	// private static boolean _regEx = false;
 	private static ArrayList<String> _find = new ArrayList<String>();
 	private static ArrayList<String> _erase = new ArrayList<String>();
 
@@ -177,6 +178,19 @@ public class LogParser {
 		return newContentAdded;
 	}
 
+	/**
+	 * Determine if the line is to be taken or not. To be taken means that:
+	 * -there is nothing to find, AND a string to be erased; -there is nothing
+	 * to find, AND --clearDate argument was given; -the line contains the
+	 * string searched OR it matches the regex given as argument; - --fileExt
+	 * argument was given so only the files that have the extension _fileExt
+	 * will be processed.
+	 * 
+	 * @param line
+	 *            , the line to be used in searching
+	 * @return, a boolean telling that the line contains the string to be found.
+	 */
+
 	private static boolean takeLine(String line) {
 		if (_erase.size() != 0 || _clearDate)
 			return true;
@@ -186,6 +200,14 @@ public class LogParser {
 		 */
 		return found(line);
 	}
+
+	/**
+	 * @param line
+	 * @return true, if the line contains the string we search for OR it matches
+	 *         the regular expression given as argument
+	 */
+	// TODO In case of exception or jobId, shoud not use String.matches(String
+	// regex)!!! Fix this
 
 	private static boolean found(String line) {
 		for (String stringToFind : _find) {

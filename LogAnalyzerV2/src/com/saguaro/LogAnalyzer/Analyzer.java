@@ -22,16 +22,15 @@ public class Analyzer {
 
 	private static HashMap<String, String> _argumentsMap = new HashMap<String, String>();
 	private static HashMap<String, String> _noValueArgumentsMap = new HashMap<String, String>();
-	//private static final String[] excludedFromSearch = { ".jar", ".zip",
-	//	".project", ".classpath", ".jre", ".class", ".settings" };
+	// private static final String[] excludedFromSearch = { ".jar", ".zip",
+	// ".project", ".classpath", ".jre", ".class", ".settings" };
 	// private static List<String> _commands = ;
 
 	private static boolean _clearDate = false;
-	//private static boolean _exception = false;
+	// private static boolean _exception = false;
 	private static int _takeNextLines = 0;
 	private static int _takePrevLines = 0;
 	private static String _thread = null;
-	
 
 	private static String _outputFolder = "analyzerResult";
 	/*
@@ -39,19 +38,18 @@ public class Analyzer {
 	 */
 	private static String _inputFileName = null;
 	private static String _fileExt = null;
-	
 
 	private static boolean _regEx = false;
-	
 
 	private static ArrayList<String> _find = new ArrayList<String>();
 	private static ArrayList<String> _erase = new ArrayList<String>();
 
 	private static boolean _notACommand = true;
+
 	// private static AnimationThread _animator;
 	private static Timer _timer;
-	//private static String newlineSeparator = System
-			//.getProperty("line.separator");
+	// private static String newlineSeparator = System
+	// .getProperty("line.separator");
 
 	static {
 		_argumentsMap.put("--inputFile", null);
@@ -74,7 +72,8 @@ public class Analyzer {
 		_noValueArgumentsMap.put("--exceptions", "Exception");
 	};
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+			throws com.saguaro.LogAnalyzer.Outputer.ArgumentsException {
 		try {
 			init(args);
 		} catch (IOException e) {
@@ -82,12 +81,7 @@ public class Analyzer {
 			return;
 		}
 
-		try {
-			validateArgs();
-		} catch (ArgumentsException e) {
-			System.out.println(e.getMessage());
-			return;
-		}
+		Outputer.validateArgs();
 
 		setupOutputLocation();
 
@@ -168,12 +162,11 @@ public class Analyzer {
 		System.out.println(System.lineSeparator() + "Analyzer done!");
 	}
 
-	private static void validateArgs() throws ArgumentsException {
-		StringBuffer sb = new StringBuffer();
-		if (_notACommand) {
-			printHelp(sb);
-		}
-	}
+	/*
+	 * private static void validateArgs() throws ArgumentsException {
+	 * StringBuffer sb = new StringBuffer(); if (_notACommand) { printHelp(sb);
+	 * } }
+	 */
 
 	/**
 	 * Prints the help information to console; tells the user of LogAnalyzer how
@@ -182,30 +175,6 @@ public class Analyzer {
 	 * @param sb
 	 * @throws ArgumentsException
 	 */
-	private static void printHelp(StringBuffer sb) throws ArgumentsException {
-		sb.append("No command found!").append(System.lineSeparator());
-		sb.append("Usage: ").append(System.lineSeparator());
-		sb.append("Search one or more words: --find text1 text2").append(
-				System.lineSeparator());
-		sb.append(
-				"If you want to search by regular expression, you need to add the command --regEx: --find string1 string2 stringN [--regEx]")
-				.append(System.lineSeparator());
-		sb.append("Extracting the activity for a thread: --thread 2378267463")
-				.append(System.lineSeparator());
-		sb.append("For exceptions' stack trace: --exceptions ").append(
-				System.lineSeparator());
-		sb.append("--jobId 10000003").append(System.lineSeparator());
-		sb.append("--clearDate").append(System.lineSeparator());
-		sb.append("--erase string1 string2 stringN").append(
-				System.lineSeparator());
-		sb.append(
-				"if you want only certain file to be processed, you can specify the desire extension --fileExt .xml")
-				.append(System.lineSeparator());
-		sb.append(
-				"You can use --takeNextLines 4 or --takePrevLines 6 along with other commands in order to take more than the current line")
-				.append(System.lineSeparator());
-		throw new ArgumentsException(sb.toString());
-	}
 
 	private static void init(String[] args) throws IOException {
 		List<String> arguments = Arrays.asList(args);
@@ -341,69 +310,42 @@ public class Analyzer {
 	 * catch (ParseException e) { return false; } return true; }
 	 */
 
-	/*private static void handleDirectory(String inputFileName)
-			throws IOException {
-
-		File directory = new File(inputFileName);
-		String[] files = directory.list();
-		// the extensions[] specify which type of files should be skipped during
-		// processing
-
-		for (int i = 0; files != null && i < files.length; i++) {
-			String file = files[i];
-			if (file.equals(_outputFolder)) {
-				continue;
-			}
-			if (_fileExt != null) {
-				if (!file.endsWith(_fileExt))
-					continue;
-			} else if (isExcluded(file)) {
-				continue;
-			}
-			String pathS = inputFileName + File.separator + file;
-			File pathF = new File(pathS);
-			if (pathF.isDirectory()) {
-				handleDirectory(pathS);
-			} else {
-				// if (!file.startsWith("extension"))
-				// continue;
-				handleFile(pathS);
-			}
-		}
-	}
-
-	private static boolean isExcluded(String file) {
-		for (String ext : excludedFromSearch) {
-			if (file.endsWith(ext)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static void handleFile(String inputFileName) throws IOException {
-		String currentFolder = new File(".").getCanonicalPath()
-				+ File.separator + _outputFolder;
-		File resultF = new File(currentFolder + File.separator
-				+ getRelativePath(inputFileName)
-				+ (new File(inputFileName)).getName());
-
-		if (resultF.exists()) {
-			resultF.delete();
-		} else {
-			resultF.getParentFile().mkdirs();
-			resultF.createNewFile();
-		}
-		BufferedReader reader = new BufferedReader(
-				new FileReader(inputFileName));
-		BufferedWriter writer = new BufferedWriter(new FileWriter(resultF));
-		Boolean newContentAdded = readFromWriteTo(reader, writer);
-
-		if (!newContentAdded) {
-			cleanEmpty(resultF);
-		}
-
-	}*/
+	/*
+	 * private static void handleDirectory(String inputFileName) throws
+	 * IOException {
+	 * 
+	 * File directory = new File(inputFileName); String[] files =
+	 * directory.list(); // the extensions[] specify which type of files should
+	 * be skipped during // processing
+	 * 
+	 * for (int i = 0; files != null && i < files.length; i++) { String file =
+	 * files[i]; if (file.equals(_outputFolder)) { continue; } if (_fileExt !=
+	 * null) { if (!file.endsWith(_fileExt)) continue; } else if
+	 * (isExcluded(file)) { continue; } String pathS = inputFileName +
+	 * File.separator + file; File pathF = new File(pathS); if
+	 * (pathF.isDirectory()) { handleDirectory(pathS); } else { // if
+	 * (!file.startsWith("extension")) // continue; handleFile(pathS); } } }
+	 * 
+	 * private static boolean isExcluded(String file) { for (String ext :
+	 * excludedFromSearch) { if (file.endsWith(ext)) { return true; } } return
+	 * false; }
+	 * 
+	 * private static void handleFile(String inputFileName) throws IOException {
+	 * String currentFolder = new File(".").getCanonicalPath() + File.separator
+	 * + _outputFolder; File resultF = new File(currentFolder + File.separator +
+	 * getRelativePath(inputFileName) + (new File(inputFileName)).getName());
+	 * 
+	 * if (resultF.exists()) { resultF.delete(); } else {
+	 * resultF.getParentFile().mkdirs(); resultF.createNewFile(); }
+	 * BufferedReader reader = new BufferedReader( new
+	 * FileReader(inputFileName)); BufferedWriter writer = new
+	 * BufferedWriter(new FileWriter(resultF)); Boolean newContentAdded =
+	 * readFromWriteTo(reader, writer);
+	 * 
+	 * if (!newContentAdded) { cleanEmpty(resultF); }
+	 * 
+	 * }
+	 */
 
 	/**
 	 * @param reader
@@ -413,104 +355,40 @@ public class Analyzer {
 	 * @return
 	 * @throws IOException
 	 */
-	/*private static boolean readFromWriteTo(BufferedReader reader,
-			BufferedWriter writer) throws IOException {
-		List<String> prevLinesBuffer = new ArrayList<String>();
-		String lineToPrint = "";
-		String line;
-		String nextLine;
-		Boolean newContentAdded = false;
-		while (true) {
-			line = reader.readLine();
-			if (line == null) {
-				break;
-			}
-			if (line.length() == 0) {
-				continue;
-			}
-
-			if (_takePrevLines != 0) {
-				if (prevLinesBuffer.size() < _takePrevLines) {
-					prevLinesBuffer.add(line);
-				} else {
-					prevLinesBuffer.remove(0);
-					prevLinesBuffer.add(line);
-				}
-			}
-
-			if (takeLine(line)) {
-				if (prevLinesBuffer.size() != 0)
-					for (String lineInBuff : prevLinesBuffer)
-						lineToPrint += processLine(lineInBuff)
-								+ newlineSeparator;
-				else {
-					lineToPrint = processLine(line);// + newlineSeparator;
-				}
-
-				// TODO: Merge the next 2 if statements
-				if (_takeNextLines != 0) {
-					int count = 0;
-					while (count <= _takeNextLines) {
-						nextLine = reader.readLine();
-						if (nextLine == null) {
-							break;
-						}
-						lineToPrint += nextLine + newlineSeparator;
-						count++;
-					}
-				}
-				/*
-				 * For exceptions and threads, we also print the stack trace
-				 *
-				if (_exception || _thread != null) {
-					while (true) {
-						nextLine = reader.readLine();
-						if (nextLine == null) {
-							break;
-						}
-						if (!nextLine.startsWith("20")) {
-							lineToPrint += nextLine + newlineSeparator;
-						} else {
-							break;
-						}
-					}
-				}
-
-				writer.write(lineToPrint + newlineSeparator);
-				newContentAdded = true;
-
-			}
-		}
-		writer.flush();
-		writer.close();
-		reader.close();
-		return newContentAdded;
-	}
-*/
-	/**
-	 * Determine if the line is to be taken or not. To be taken means that:
-	 * -there is nothing to find, AND a string to be erased; -there is nothing
-	 * to find, AND --clearDate argument was given; -the line contains the
-	 * string searched OR it matches the regex given as argument; - --fileExt
-	 * argument was given so only the files that have the extension _fileExt
-	 * will be processed.
+	/*
+	 * private static boolean readFromWriteTo(BufferedReader reader,
+	 * BufferedWriter writer) throws IOException { List<String> prevLinesBuffer
+	 * = new ArrayList<String>(); String lineToPrint = ""; String line; String
+	 * nextLine; Boolean newContentAdded = false; while (true) { line =
+	 * reader.readLine(); if (line == null) { break; } if (line.length() == 0) {
+	 * continue; }
 	 * 
-	 * @param line
-	 *            , the line to be used in searching
-	 * @return, a boolean telling that the line contains the string to be found.
+	 * if (_takePrevLines != 0) { if (prevLinesBuffer.size() < _takePrevLines) {
+	 * prevLinesBuffer.add(line); } else { prevLinesBuffer.remove(0);
+	 * prevLinesBuffer.add(line); } }
+	 * 
+	 * if (takeLine(line)) { if (prevLinesBuffer.size() != 0) for (String
+	 * lineInBuff : prevLinesBuffer) lineToPrint += processLine(lineInBuff) +
+	 * newlineSeparator; else { lineToPrint = processLine(line);// +
+	 * newlineSeparator; }
+	 * 
+	 * // TODO: Merge the next 2 if statements if (_takeNextLines != 0) { int
+	 * count = 0; while (count <= _takeNextLines) { nextLine =
+	 * reader.readLine(); if (nextLine == null) { break; } lineToPrint +=
+	 * nextLine + newlineSeparator; count++; } } /* For exceptions and threads,
+	 * we also print the stack trace
+	 * 
+	 * if (_exception || _thread != null) { while (true) { nextLine =
+	 * reader.readLine(); if (nextLine == null) { break; } if
+	 * (!nextLine.startsWith("20")) { lineToPrint += nextLine +
+	 * newlineSeparator; } else { break; } } }
+	 * 
+	 * writer.write(lineToPrint + newlineSeparator); newContentAdded = true;
+	 * 
+	 * } } writer.flush(); writer.close(); reader.close(); return
+	 * newContentAdded; }
 	 */
 
-	// TODO clarify!
-	/*  private static boolean takeLine(String line) {
-		  if (_erase.size() != 0 || _clearDate)
-			  return true;
-
-		/*
-		 * if(_fileExt != null && _find.size() != 0){ return true; }
-		 /
-		return found(line);
-	}
-	 */
 	/**
 	 * @param line
 	 * @return true, if the line contains the string we search for OR it matches
@@ -518,26 +396,14 @@ public class Analyzer {
 	 */
 	// TODO In case of exception or jobId, shoud not use String.matches(String
 	// regex)!!! Fix this
-	/*private static boolean found(String line) {
-		for (String stringToFind : _find) {
-			if (stringToFind != null) {
-				if (line.indexOf(stringToFind) != -1)
-					return true;
-				if (_regEx) {
-					try {
-						if (line.matches(stringToFind))
-							return true;
-					} catch (PatternSyntaxException e) {
-						System.out
-								.println(" Regular expression's syntax is invalid!");
-						return false;
-					}
-				}
-			}
-		}
-		return false;
-	}
-*/
+	/*
+	 * private static boolean found(String line) { for (String stringToFind :
+	 * _find) { if (stringToFind != null) { if (line.indexOf(stringToFind) !=
+	 * -1) return true; if (_regEx) { try { if (line.matches(stringToFind))
+	 * return true; } catch (PatternSyntaxException e) { System.out
+	 * .println(" Regular expression's syntax is invalid!"); return false; } } }
+	 * } return false; }
+	 */
 	/**
 	 * Refine the line to be printed in log analyzer result.
 	 * 
@@ -545,71 +411,54 @@ public class Analyzer {
 	 *            , the line to be refined.
 	 * @return, the same line, but refined.
 	 */
-	/*private static String processLine(String line) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-		if (!_erase.isEmpty()) {
-			Iterator<String> it = _erase.iterator();
-			while (it.hasNext()) {
-				line = line.replace(it.next(), "");
-			}
-		}
-
-		if (_clearDate) {
-			try {
-				sdf.parse(line.substring(1, 10));
-				line = line.substring(31, line.length());
-
-			} catch (ParseException e) {
-				return line;
-			} catch (StringIndexOutOfBoundsException r) {
-				return line;
-			}
-		}
-		return line;
-	}
-*/
-	/*private static String getRelativePath(String inputFileName)
-			throws IOException {
-		String canP = new File(".").getCanonicalPath();
-		inputFileName = inputFileName.substring(0,
-				inputFileName.lastIndexOf(File.separator));
-		inputFileName = inputFileName.substring(canP.length());
-		if (!inputFileName.isEmpty()) {
-			inputFileName = inputFileName + File.separator;
-		}
-		return inputFileName;
-	}*/
-
-	/*private static void cleanEmpty(File resultF) {
-		resultF.delete();
-		removeParents(resultF);
-	}*/
-
-	/*private static void removeParents(File resultF) {
-		if (resultF.getName().equals(_outputFolder)) {
-			return;
-		}
-		String parent = resultF.getParent();
-		File parentF = new File(parent);
-
-		if (parentF.list().length == 0) {
-			parentF.delete();
-			removeParents(parentF);
-		}
-
-	}
+	/*
+	 * private static String processLine(String line) { SimpleDateFormat sdf =
+	 * new SimpleDateFormat("yyyy-MM-dd");
+	 * 
+	 * if (!_erase.isEmpty()) { Iterator<String> it = _erase.iterator(); while
+	 * (it.hasNext()) { line = line.replace(it.next(), ""); } }
+	 * 
+	 * if (_clearDate) { try { sdf.parse(line.substring(1, 10)); line =
+	 * line.substring(31, line.length());
+	 * 
+	 * } catch (ParseException e) { return line; } catch
+	 * (StringIndexOutOfBoundsException r) { return line; } } return line; }
 	 */
-	
-	/*private static void fillUp(String toErase, String elements) {
+	/*
+	 * private static String getRelativePath(String inputFileName) throws
+	 * IOException { String canP = new File(".").getCanonicalPath();
+	 * inputFileName = inputFileName.substring(0,
+	 * inputFileName.lastIndexOf(File.separator)); inputFileName =
+	 * inputFileName.substring(canP.length()); if (!inputFileName.isEmpty()) {
+	 * inputFileName = inputFileName + File.separator; } return inputFileName; }
+	 */
 
-	}
-    */
+	/*
+	 * private static void cleanEmpty(File resultF) { resultF.delete();
+	 * removeParents(resultF); }
+	 */
+
+	/*
+	 * private static void removeParents(File resultF) { if
+	 * (resultF.getName().equals(_outputFolder)) { return; } String parent =
+	 * resultF.getParent(); File parentF = new File(parent);
+	 * 
+	 * if (parentF.list().length == 0) { parentF.delete();
+	 * removeParents(parentF); }
+	 * 
+	 * }
+	 */
+
+	/*
+	 * private static void fillUp(String toErase, String elements) {
+	 * 
+	 * }
+	 */
 	private static boolean isInputArgument(String argument) {
 		return _argumentsMap.containsKey(argument);
 	}
 
-	private static class ArgumentsException extends Throwable {
+	public static class ArgumentsException extends Throwable {
 		private String message = "";
 
 		public ArgumentsException(String message) {
@@ -648,7 +497,7 @@ public class Analyzer {
 		}
 
 	}
-	
+
 	public static String get_fileExt() {
 		return _fileExt;
 	}
@@ -656,7 +505,7 @@ public class Analyzer {
 	public static void set_fileExt(String _fileExt) {
 		Analyzer._fileExt = _fileExt;
 	}
-	
+
 	public static int get_takeNextLines() {
 		return _takeNextLines;
 	}
@@ -680,12 +529,20 @@ public class Analyzer {
 	public static void set_thread(String _thread) {
 		Analyzer._thread = _thread;
 	}
-	
+
 	public static boolean is_regEx() {
 		return _regEx;
 	}
 
 	public static void set_regEx(boolean _regEx) {
 		Analyzer._regEx = _regEx;
+	}
+
+	public static boolean is_notACommand() {
+		return _notACommand;
+	}
+
+	public static void set_notACommand(boolean _notACommand) {
+		Analyzer._notACommand = _notACommand;
 	}
 }
