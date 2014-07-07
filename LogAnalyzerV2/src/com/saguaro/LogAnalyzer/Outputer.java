@@ -3,6 +3,8 @@ package com.saguaro.LogAnalyzer;
 import com.saguaro.LogAnalyzer.Analyzer.ArgumentsException;
 
 public class Outputer {
+	
+	
 	public static void printHelp(StringBuffer sb) throws ArgumentsException {
 		sb.append("No command found!").append(System.lineSeparator());
 		sb.append("Usage: ").append(System.lineSeparator());
@@ -28,6 +30,7 @@ public class Outputer {
 		throw new ArgumentsException(sb.toString());
 	}
 
+	
 	static class ArgumentsException extends Throwable {
 		private String message = "";
 
