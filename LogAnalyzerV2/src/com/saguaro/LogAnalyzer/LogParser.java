@@ -290,9 +290,34 @@ public class LogParser {
 		}
 
 	}
+	
+	/* Possible merge algorithm
+	 * 
+	 *  -> we use a heap with the number of elements equal to the number of log files
+	 *  
+	 *  -> we read the first records from all the files and insert them into the heap
+	 *  
+	 *  -> loop until no more records in any files
+	 * 			-> remove the max element from the heap
+	 *  		-> write it to the master log file
+	 * 			-> read the next record from the file that the previously max element belonged to
+	 * 						->if(noMoreRecordsinFile)
+	 * 									-> remove file from filelist
+	 * 									-> continue
+	 * 	
+	 * 
+	 *  //there should be a duplicate check
+	 * 	-> if the element it's not the same as the previously max element,add it to the heap
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * */
+	
 
-	public static void init() {
-		// TODO Auto-generated method stub
-
-	}
 }
