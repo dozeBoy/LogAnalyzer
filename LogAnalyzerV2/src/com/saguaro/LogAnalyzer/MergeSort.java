@@ -21,15 +21,15 @@ public class MergeSort {
 			else if (less(aux[i], aux[j]))
 				a[k] = aux[j++]; // compare the pointers from the two halfs
 			else
-				// and copy back in the original arrary
+				// and copy back in the original array
 				a[k] = aux[i++]; // the smallest of the two
 		}
 		// possible assert ?
 	}
 
-	private static boolean less(Comparable comparable, Comparable comparable2) {
-		// TODO Auto-generated method stub
-		return false;
+	private static boolean less(Comparable v, Comparable w) {
+
+		return v.compareTo(w) < 0;
 	}
 
 	private static boolean isSorted(Comparable[] a, int low, int high) {
@@ -39,17 +39,16 @@ public class MergeSort {
 
 	// recursive sorting method
 	public static void sort(Comparable[] a, Comparable[] aux, int low, int high) {
-		if (high <= low)
-			return;
+		if (high <= low) return;
 		int mid = low + (high - low) / 2; // compute middle of the array
 		sort(a, aux, low, mid); // sort first half
 		sort(a, aux, mid + 1, high); // sort second half
-		merge(a, aux, low, mid, high); // merge halfs
+		merge(a, aux, low, mid, high); // merge 
 	}
 
-	public static void sort(Comparable[] a){
-		Comparable[] aux = new Comparable[a.length]; //create auxiliary array
-		sort(a,aux,0,low,a.length - 1);	//and use it
-		
+	public static void sort(Comparable[] a) {
+		Comparable[] aux = new Comparable[a.length]; // create auxiliary array
+		sort(a, aux, 0, low, a.length - 1); // and use it
+
 	}
 }

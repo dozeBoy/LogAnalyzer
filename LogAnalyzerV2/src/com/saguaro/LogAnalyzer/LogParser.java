@@ -300,6 +300,8 @@ public class LogParser {
 	 *  
 	 *  -> loop until no more records in any files   // 
 	 * 			-> remove the max element from the heap
+	 * 
+	 * 
 	 *  		-> write it to the master log file
 	 * 			-> read the next record from the file that the previously max element belonged to
 	 * 						->if(noMoreRecordsinFile)

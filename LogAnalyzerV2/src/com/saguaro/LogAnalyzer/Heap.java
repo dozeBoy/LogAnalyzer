@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 
 
 //  a heap may be a better and simpler implementation because it use less memory overhead 
-//  as we store the data directly in the array
+//  (elements can be stored directly in an array, without having to allocate tree nodes and pointers and everything)
 //	at it worst case it still has a complexity of O(log N) beside
 //  a balanced tree that in the worst case scenario has a complexity of O(n)
 //  the number of elements in the heap should be equal to the number of log files
