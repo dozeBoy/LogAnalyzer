@@ -1,4 +1,4 @@
-package com.saguaro.LogAnalyzer;
+package com.heapify;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -12,15 +12,6 @@ import java.util.NoSuchElementException;
 
 public class Heap<T extends Comparable<T>> {
 
-	/*
-	 * When we refer to an array (or a sub array) of size size as a "heap", 
-	 * we mean that it has the heap property. 
-	 * For all i, 0 <= i < size: 
-	 * if (left(i) < size) 
-	 *      order.compare(heap[i], heap[left(i)]) >= 0. 
-	 * if (right(i) < size)
-	 *      order.compare(heap[i], heap[right(i)]) >= 0.
-	 */
 
 	private ArrayList<T> items; // use arrayList so items can be added without
 								// limit
@@ -41,7 +32,7 @@ public class Heap<T extends Comparable<T>> {
 	 *  Reach heap property : Propagate up from last element.
 	 */
 	
-	private void swapUp() {
+	private void takeMeUp() {
 		int k = items.size() - 1; // set k to the index of the last element of
 								  // the ArrayList
 								  // because is the one that is going to be
@@ -86,11 +77,11 @@ public class Heap<T extends Comparable<T>> {
 	
 	public void insert(T item) {
 		items.add(item); // 
-		swapUp(); 
+		takeMeUp(); 
 	}
 
 
-	private void swapDown() {
+	private void takeMeDown() {
 		int k = 0;
 		int l = 2 * k + 1;
 		
@@ -141,7 +132,7 @@ public class Heap<T extends Comparable<T>> {
 		items.set(0, items.remove(items.size() - 1));// the last item is removed
 														// and written in the
 														// first position
-		swapDown(); // call swap down
+		takeMeDown(); // call swap down
 		return hold;
 	}
 
