@@ -38,8 +38,10 @@ public class Heap<T extends Comparable<T>> {
 								  // because is the one that is going to be
 								  // swap up
 
-		//Keep swaping until we reach the top of the heap or find a larger parent
+		//Keep swapping until we reach the top of the heap or find a larger parent
 		while (k > 0) { 
+			
+			
 			int p = (k - 1) / 2;    // compute parent,p, item
 									// we know this because k has children at
 									// indexes 2*k+1 (left child) and 2*k+2
@@ -73,6 +75,7 @@ public class Heap<T extends Comparable<T>> {
 	
 	/*
 	 * Add new item to the end of the ArrayList 
+	 * and check where it belongs
 	 */
 	
 	public void insert(T item) {

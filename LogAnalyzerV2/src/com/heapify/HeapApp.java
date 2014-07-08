@@ -1,8 +1,6 @@
-package com.saguaro.LogAnalyzer;
+package com.heapify;
 
 import java.util.Scanner;
-
-import com.heapify.Heap;
 
 public class HeapApp {
 
