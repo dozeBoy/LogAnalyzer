@@ -1,4 +1,4 @@
-package com.saguaro.LogAnalyzer;
+package misceleanous;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

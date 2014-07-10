@@ -1,26 +1,18 @@
 package com.saguaro.LogAnalyzer;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.PatternSyntaxException;
+
 
 public class Analyzer {
 
 	private static HashMap<String, String> _argumentsMap = new HashMap<String, String>();
+
 	private static HashMap<String, String> _noValueArgumentsMap = new HashMap<String, String>();
 	// private static final String[] excludedFromSearch = { ".jar", ".zip",
 	// ".project", ".classpath", ".jre", ".class", ".settings" };
@@ -33,10 +25,12 @@ public class Analyzer {
 	private static String _thread = null;
 
 	private static String _outputFolder = "analyzerResult";
+
 	/*
 	 * private static String _date = null; private static String _period = null;
 	 */
 	private static String _inputFileName = null;
+
 	private static String _fileExt = null;
 
 	private static boolean _regEx = false;
@@ -47,7 +41,7 @@ public class Analyzer {
 	private static boolean _notACommand = true;
 
 	// private static AnimationThread _animator;
-	private static Timer _timer;
+	
 	// private static String newlineSeparator = System
 	// .getProperty("line.separator");
 
@@ -73,7 +67,7 @@ public class Analyzer {
 	};
 
 	public static void main(String[] args)
-			throws com.saguaro.LogAnalyzer.Outputer.ArgumentsException {
+			throws ArgumentsException {
 		try {
 			init(args);
 		} catch (IOException e) {
@@ -81,30 +75,22 @@ public class Analyzer {
 			return;
 		}
 
-		Outputer.validateArgs();
+		validateArgs();
 
 		setupOutputLocation();
 
-		startAnimation();
+		Outputer.startAnimation();
 
 		try {
-			executeCommand();
+			LogParser.executeCommand();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			stopAnimation();
+			Outputer.stopAnimation();
 		}
 	}
 
-	private static void startAnimation() {
-		_timer = new Timer();
-		_timer.schedule(new AnimationThread(), 0, 100);
-	}
-
-	private static void stopAnimation() {
-		_timer.cancel();
-
-	}
+	
 
 	private static void setupOutputLocation() {
 		if (!_find.isEmpty()) {
@@ -118,55 +104,38 @@ public class Analyzer {
 
 	}
 
-	private static void executeCommand() throws IOException {
-		logCommandBefore();
-		try {
-			File inputF = (new File(_inputFileName)).getAbsoluteFile();
-			String filePath = inputF.getAbsolutePath();
-			if (inputF.isDirectory()) {
-				LogParser.handleDirectory(filePath);
-			} else {
-				LogParser.handleFile(filePath);
-			}
-		} catch (IOException e) {
-			System.out.println("error : " + e.getMessage());
-			e.printStackTrace();
+	public static void validateArgs() throws ArgumentsException {
+		StringBuffer sb = new StringBuffer();
+		if (Analyzer.is_notACommand()) {
+			printHelp(sb);
 		}
-		logCommandAfter();
 	}
-
-	private static void logCommandBefore() throws IOException {
-		StringBuffer result = new StringBuffer();
-
-		Iterator<String> it = _argumentsMap.keySet().iterator();
-		while (it.hasNext()) {
-			String key = it.next();
-			if (_argumentsMap.get(key) != null) {
-				result.append("" + key).append(" " + _argumentsMap.get(key))
-						.append(System.lineSeparator());
-			}
-		}
-		System.out.println("Executing commands: ");
-		System.out.println(result.toString());
-		String o = _inputFileName + "_" + _find.toString();
-		File inputF = (new File(_inputFileName)).getAbsoluteFile();
-
-		if (inputF.isDirectory()) {
-			o = new File(".").getCanonicalPath() + File.separator
-					+ _outputFolder;
-		}
-		System.out.println("The result will be put into " + o);
+	
+	
+	public static void printHelp(StringBuffer sb) throws ArgumentsException {
+		sb.append("No command found!").append(System.lineSeparator());
+		sb.append("Usage: ").append(System.lineSeparator());
+		sb.append("Search one or more words: --find text1 text2").append(
+				System.lineSeparator());
+		sb.append(
+				"If you want to search by regular expression, you need to add the command --regEx: --find string1 string2 stringN [--regEx]")
+				.append(System.lineSeparator());
+		sb.append("Extracting the activity for a thread: --thread 2378267463")
+				.append(System.lineSeparator());
+		sb.append("For exceptions' stack trace: --exceptions ").append(
+				System.lineSeparator());
+		sb.append("--jobId 10000003").append(System.lineSeparator());
+		sb.append("--clearDate").append(System.lineSeparator());
+		sb.append("--erase string1 string2 stringN").append(
+				System.lineSeparator());
+		sb.append(
+				"if you want only certain file to be processed, you can specify the desire extension --fileExt .xml")
+				.append(System.lineSeparator());
+		sb.append(
+				"You can use --takeNextLines 4 or --takePrevLines 6 along with other commands in order to take more than the current line")
+				.append(System.lineSeparator());
+		throw new ArgumentsException(sb.toString());
 	}
-
-	private static void logCommandAfter() {
-		System.out.println(System.lineSeparator() + "Analyzer done!");
-	}
-
-	/*
-	 * private static void validateArgs() throws ArgumentsException {
-	 * StringBuffer sb = new StringBuffer(); if (_notACommand) { printHelp(sb);
-	 * } }
-	 */
 
 	/**
 	 * Prints the help information to console; tells the user of LogAnalyzer how
@@ -243,6 +212,7 @@ public class Analyzer {
 
 		if (arguments.contains("--exceptions")) {
 			_find.add("Exception");
+			_find.add("\tat ");
 		}
 		if (_argumentsMap.get("--find") != null)
 			populateList(_find, _argumentsMap.get("--find"));
@@ -470,33 +440,7 @@ public class Analyzer {
 		}
 	}
 
-	private static class AnimationThread extends TimerTask {
-		private boolean isStarted = false;
-		private boolean isOdd = false;
-		private int numberOfRuns = 0;
-
-		@Override
-		public void run() {
-			if (numberOfRuns > 6) {
-				numberOfRuns = 0;
-				System.out.print("\r");
-				System.out.print("                       ");
-				System.out.print("\r");
-			} else if (numberOfRuns <= 3) {
-				System.out.print(".");
-			}
-			numberOfRuns++;
-		}
-
-		public void stop() {
-			isStarted = false;
-		}
-
-		public void start() {
-			isStarted = true;
-		}
-
-	}
+	
 
 	public static String get_fileExt() {
 		return _fileExt;
@@ -544,5 +488,29 @@ public class Analyzer {
 
 	public static void set_notACommand(boolean _notACommand) {
 		Analyzer._notACommand = _notACommand;
+	}
+
+	public static String get_inputFileName() {
+		return _inputFileName;
+	}
+
+	public static void set_inputFileName(String _inputFileName) {
+		Analyzer._inputFileName = _inputFileName;
+	}
+
+	public static HashMap<String, String> get_argumentsMap() {
+		return _argumentsMap;
+	}
+
+	public static void set_argumentsMap(HashMap<String, String> _argumentsMap) {
+		Analyzer._argumentsMap = _argumentsMap;
+	}
+
+	public static String get_outputFolder() {
+		return _outputFolder;
+	}
+
+	public static void set_outputFolder(String _outputFolder) {
+		Analyzer._outputFolder = _outputFolder;
 	}
 }

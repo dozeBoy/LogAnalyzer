@@ -1,4 +1,4 @@
-package com.saguaro.LogAnalyzer;
+package misceleanous;
 
 public class MergeSort {
 

@@ -15,7 +15,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class LogParser {
 
-	private static String _outputFolder = "analyzerResult";
+	// private static String _outputFolder = "analyzerResult";
 	// private static String _fileExt = null;
 	private static final String[] excludedFromSearch = { ".jar", ".zip",
 			".project", ".classpath", ".jre", ".class", ".settings" };
@@ -33,6 +33,53 @@ public class LogParser {
 	private static String newlineSeparator = System
 			.getProperty("line.separator");
 
+	public static void executeCommand() throws IOException {
+		logCommandBefore();
+		try {
+			File inputF = (new File(Analyzer.get_inputFileName()))
+					.getAbsoluteFile();
+			String filePath = inputF.getAbsolutePath();
+			if (inputF.isDirectory()) {
+				LogParser.handleDirectory(filePath);
+			} else {
+				LogParser.handleFile(filePath);
+			}
+		} catch (IOException e) {
+			System.out.println("error : " + e.getMessage());
+			e.printStackTrace();
+		}
+		logCommandAfter();
+	}
+
+	private static void logCommandBefore() throws IOException {
+		StringBuffer result = new StringBuffer();
+
+		Iterator<String> it = Analyzer.get_argumentsMap().keySet().iterator();
+		while (it.hasNext()) {
+			String key = it.next();
+			if (Analyzer.get_argumentsMap().get(key) != null) {
+				result.append("" + key)
+						.append(" " + Analyzer.get_argumentsMap().get(key))
+						.append(System.lineSeparator());
+			}
+		}
+		System.out.println("Executing commands: ");
+		System.out.println(result.toString());
+		String o = Analyzer.get_inputFileName() + "_" + _find.toString();
+		File inputF = (new File(Analyzer.get_inputFileName()))
+				.getAbsoluteFile();
+
+		if (inputF.isDirectory()) {
+			o = new File(".").getCanonicalPath() + File.separator
+					+ Analyzer.get_outputFolder();
+		}
+		System.out.println("The result will be put into " + o);
+	}
+
+	private static void logCommandAfter() {
+		System.out.println(System.lineSeparator() + "Analyzer done!");
+	}
+
 	public static void handleDirectory(String inputFileName) throws IOException {
 
 		File directory = new File(inputFileName);
@@ -42,7 +89,7 @@ public class LogParser {
 
 		for (int i = 0; files != null && i < files.length; i++) {
 			String file = files[i];
-			if (file.equals(_outputFolder)) {
+			if (file.equals(Analyzer.get_outputFolder())) {
 				continue;
 			}
 			if (Analyzer.get_fileExt() != null) {
@@ -74,7 +121,7 @@ public class LogParser {
 
 	public static void handleFile(String inputFileName) throws IOException {
 		String currentFolder = new File(".").getCanonicalPath()
-				+ File.separator + _outputFolder;
+				+ File.separator + Analyzer.get_outputFolder();
 		File resultF = new File(currentFolder + File.separator
 				+ getRelativePath(inputFileName)
 				+ (new File(inputFileName)).getName());
@@ -278,7 +325,7 @@ public class LogParser {
 	}
 
 	private static void removeParents(File resultF) {
-		if (resultF.getName().equals(_outputFolder)) {
+		if (resultF.getName().equals(Analyzer.get_outputFolder())) {
 			return;
 		}
 		String parent = resultF.getParent();
@@ -290,53 +337,44 @@ public class LogParser {
 		}
 
 	}
-	
-	/* Possible mergeFiles algorithm 
-	 * 
-	 *  > We use a heap with the number of elements equal to the number of log files so we get
-	 *    a complexity of O(log n) where n is the number of log files 
-	 *   
-	 *    A heap may be a better and simpler implementation than a BST because it use less memory overhead 
-	 * 	  (elements can be stored directly in an array, 
-	 * 	  without having to allocate tree nodes and pointers and everything)
-	 *	  at it worst case it still has a complexity of O(log N) beside
-	 *	  a balanced tree that in the worst case scenario has a complexity of O(n)
-	 *	  the number of elements in the heap should be equal to the number of log files
-	 *  
-	 *  > we read the first records from all the files and insert them into the heap
-	 *  
-	 *    // 
-	 *  
-	 *  > loop until no more records in any files   // 
-	 * 			-> remove the max element from the heap
-	 * 
-	 * 
-	 *  		-> write it to the master log file
-	 * 			-> read the next record from the file that the previously max element belonged to
-	 * 						->if(noMoreRecordsinFile)
-	 * 									-> remove file from filelist
-	 * 									-> continue
-	 * 	// 
-	 * 
-	 * 
-	 *  /
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * */
-	
-	
+
 	/*
-	 *  Search Algorithm
-	 *  
-	 *  //maybe a good way is that we should combine the merge and search algorithm as we should get 
-	 *  //faster results by searching in a single sorted file than searching in multiple files
+	 * Possible mergeFiles algorithm
+	 * 
+	 * > We use a heap with the number of elements equal to the number of log
+	 * files so we get a complexity of O(log n) where n is the number of log
+	 * files
+	 * 
+	 * A heap may be a better and simpler implementation than a BST because it
+	 * use less memory overhead (elements can be stored directly in an array,
+	 * without having to allocate tree nodes and pointers and everything) at it
+	 * worst case it still has a complexity of O(log N) beside a balanced tree
+	 * that in the worst case scenario has a complexity of O(n) the number of
+	 * elements in the heap should be equal to the number of log files
+	 * 
+	 * > we read the first records from all the files and insert them into the
+	 * heap
+	 * 
+	 * //
+	 * 
+	 * > loop until no more records in any files // -> remove the max element
+	 * from the heap
 	 * 
 	 * 
-	 * */
+	 * -> write it to the master log file -> read the next record from the file
+	 * that the previously max element belonged to ->if(noMoreRecordsinFile) ->
+	 * remove file from filelist -> continue //
+	 * 
+	 * 
+	 * /
+	 */
+
+	/*
+	 * Search Algorithm
+	 * 
+	 * //maybe a good way is that we should combine the merge and search
+	 * algorithm as we should get //faster results by searching in a single
+	 * sorted file than searching in multiple files
+	 */
 
 }
