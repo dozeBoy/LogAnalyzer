@@ -288,15 +288,14 @@ public class LogAnalyzer {
 		 * ".*Job-j\\s\\d{9,}.*ID:.*From.*To.*"); }
 		 */
 
-		
 		/*
-		 * As we need the whole trace when we search only for Exception
-		 * we search also for "\tat " because this is a pretty uncommon string
+		 * As we need the whole trace when we search only for Exception we
+		 * search also for "\tat " because this is a pretty uncommon string
 		 * outside the stacktraces.
-		 * */
-		if (arguments.contains("--exceptions")) {	
-			_find.add("Exception");	
-			_find.add("\tat "); 
+		 */
+		if (arguments.contains("--exceptions")) {
+			_find.add("Exception");
+			_find.add("\tat ");
 		}
 		if (_argumentsMap.get("--find") != null)
 			populateList(_find, _argumentsMap.get("--find"));
@@ -390,7 +389,15 @@ public class LogAnalyzer {
 			} else {
 				// if (!file.startsWith("extension"))
 				// continue;
-				handleFile(pathS);
+				
+				
+				//Check permission
+				if (pathF.canRead()) {
+					handleFile(pathS);
+				} else {
+					System.out.println(pathF.getAbsolutePath()
+							+ "Cannot Read: ");
+				}
 			}
 		}
 	}
@@ -543,8 +550,7 @@ public class LogAnalyzer {
 	 */
 	// TODO In case of exception or jobId, should not use String.matches(String
 	// regex)!!! Fix this
-	
-	
+
 	private static boolean found(String line) {
 		for (String stringToFind : _find) {
 			if (stringToFind != null) {
@@ -647,49 +653,39 @@ public class LogAnalyzer {
 		}
 	}
 
-	/* Possible mergeFiles algorithm 
-	 * 
-	 *  -> we use a heap with the number of elements equal to the number of log files so we get
-	 *    a complexity of O(log n) where n is the number of log files 
-	 *  
-	 *  -> we read the first records from all the files and insert them into the heap
-	 *  
-	 *  -> loop until no more records in any files   // 
-	 * 			-> remove the max element from the heap
-	 * 
-	 * 
-	 *  		-> write it to the final log file
-	 * 			-> read the next record from the file that the previously max element belonged to
-	 * 						->if(noMoreRecordsinFile)
-	 * 									-> remove file from filelist
-	 * 									-> continue
-	 * 	// 
-	 * 
-	 *  //there should be a duplicate check
-	 * 	-> if the element it's not the same as the previously max element,add it to the heap
-	 * 
-	 *  // final complexity should be O(n log k) where k is the number of log files and k is the total number of records
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * */
-	
-	
 	/*
-	 *  Search Algorithm
-	 *  
-	 *  //maybe a good way is that we should combine the merge and search algorithm as we should get 
-	 *  //faster results by searching in a single sorted file than searching in multiple files
+	 * Possible mergeFiles algorithm
+	 * 
+	 * -> we use a heap with the number of elements equal to the number of log
+	 * files so we get a complexity of O(log n) where n is the number of log
+	 * files
+	 * 
+	 * -> we read the first records from all the files and insert them into the
+	 * heap
+	 * 
+	 * -> loop until no more records in any files // -> remove the max element
+	 * from the heap
 	 * 
 	 * 
-	 * */
+	 * -> write it to the final log file -> read the next record from the file
+	 * that the previously max element belonged to ->if(noMoreRecordsinFile) ->
+	 * remove file from filelist -> continue //
+	 * 
+	 * //there should be a duplicate check -> if the element it's not the same
+	 * as the previously max element,add it to the heap
+	 * 
+	 * // final complexity should be O(n log k) where k is the number of log
+	 * files and k is the total number of records
+	 */
 
+	/*
+	 * Search Algorithm
+	 * 
+	 * //maybe a good way is that we should combine the merge and search
+	 * algorithm as we should get //faster results by searching in a single
+	 * sorted file than searching in multiple files
+	 */
 
-	
 	private static class AnimationThread extends TimerTask {
 		private boolean isStarted = false;
 		private boolean isOdd = false;
