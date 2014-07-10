@@ -293,12 +293,21 @@ public class LogParser {
 	
 	/* Possible mergeFiles algorithm 
 	 * 
-	 *  -> we use a heap with the number of elements equal to the number of log files so we get
+	 *  > We use a heap with the number of elements equal to the number of log files so we get
 	 *    a complexity of O(log n) where n is the number of log files 
+	 *   
+	 *    A heap may be a better and simpler implementation than a BST because it use less memory overhead 
+	 * 	  (elements can be stored directly in an array, 
+	 * 	  without having to allocate tree nodes and pointers and everything)
+	 *	  at it worst case it still has a complexity of O(log N) beside
+	 *	  a balanced tree that in the worst case scenario has a complexity of O(n)
+	 *	  the number of elements in the heap should be equal to the number of log files
 	 *  
-	 *  -> we read the first records from all the files and insert them into the heap
+	 *  > we read the first records from all the files and insert them into the heap
 	 *  
-	 *  -> loop until no more records in any files   // 
+	 *    // 
+	 *  
+	 *  > loop until no more records in any files   // 
 	 * 			-> remove the max element from the heap
 	 * 
 	 * 
@@ -309,10 +318,8 @@ public class LogParser {
 	 * 									-> continue
 	 * 	// 
 	 * 
-	 *  //there should be a duplicate check
-	 * 	-> if the element it's not the same as the previously max element,add it to the heap
 	 * 
-	 *  // final complexity should be O(n log k) where k is the number of log files and k is the total number of records
+	 *  /
 	 * 
 	 * 
 	 * 
