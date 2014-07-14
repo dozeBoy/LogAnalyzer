@@ -395,8 +395,7 @@ public class LogAnalyzer {
 				if (pathF.canRead()) {
 					handleFile(pathS);
 				} else {
-					System.out.println(pathF.getAbsolutePath()
-							+ "Cannot Read: ");
+					continue;
 				}
 			}
 		}
